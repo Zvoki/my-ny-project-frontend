@@ -12,6 +12,11 @@ import { useEffect, useState } from "react";
 //  navigacijske linkove bez reloada stranice.
 import { useSearchParams, Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import { searchProducts } from "../api/search";
+
+useEffect(() => {
+  searchProducts(q).then(setResults);
+}, [q]);
 
 //params.get("q") čita vrijednost parametra q iz query 
 // stringa, npr. ako je URL /search?q=telefon, q će biti 

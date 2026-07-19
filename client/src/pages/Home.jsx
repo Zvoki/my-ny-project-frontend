@@ -6,38 +6,35 @@ import { useEffect, useState } from "react";
 import Spots from "../components/Spots";
 import ProductCard from "../components/ProductCard";
 import Hero from "../components/Hero";
-
-
+import { getPopularProducts } from "../api/products";
 export default function Home() {
-    const [products, setProducts] = useState([]);
-   /* useEffect tu garantuje da se popularni proizvodi jednom učitaju sa servera i da se rezultat smesti u stanje
- pre nego što se lista prikaže*/
-    useEffect(() => {  
-        // Fetch popular products from the server
-        fetch("http://localhost:8000/products/popular")
+  const [products, setProducts] = useState([]);
 
-            //pokazuje tijelo odgovora kao JSON
-            .then(res => res.json())
-            
-            .then(data => {
-                console.log("Produkter lästa:", data);
-                setProducts(data);
-            })
-            .catch(err => console.error("Fel när produkter skulle läsas:", err));
-    }, []);
+  useEffect(() => {
+    getPopularProducts()  // koristi API servis
+      .then(data => {
+        console.log("Produkter lästa:", data);
+        setProducts(data);
+      })
+      .catch(err => console.error("Fel när produkter skulle läsas:", err));
+  }, []);
 
-    // prikaži najviše 8 proizvoda
-    const visible = products.slice(0, 8);
-    return (
-        <div>
-            <Hero />
-            <Spots />  {/* Spots sekcija — vidljiva samo na desktopu */}
-            <div className="grid"> {visible.map(p =>
-                (<ProductCard key={p.id} product={p} />))}
-            </div>
-        </div>
-    );
-} 
+  const visible = products.slice(0, 8);
+
+  return (
+    <div>
+      <Hero />
+      <Spots />
+      <div className="grid">
+        {visible.map(p => (
+          <ProductCard key={p.id} product={p} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
 /**
  * useState drži lokalni array proizvoda, a useEffect je tu zadužen za “side‑efekt” – dohvat podataka s backend‑a. 
  * Evo šta se dešava:

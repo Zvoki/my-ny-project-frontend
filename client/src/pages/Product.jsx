@@ -35,6 +35,11 @@ dugme “Lägg i varukorg” ne radi ništa
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import { getProduct } from "../api/products";
+
+useEffect(() => {
+  getProduct(slug).then(setProduct);
+}, [slug]);
 
 
 export default function Product() {
