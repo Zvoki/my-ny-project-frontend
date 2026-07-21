@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = (import.meta.env.VITE_API_URL || "https://backend-ryn4.onrender.com").replace(/\/$/, "");
 
 export async function getProduct(slug) {
   const res = await fetch(`${API_URL}/products/${slug}`);

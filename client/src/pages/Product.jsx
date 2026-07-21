@@ -33,27 +33,35 @@ prikazati 3 slična proizvoda
 dugme “Lägg i varukorg” ne radi ništa 
  */
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { getProduct } from "../api/products";
-
-useEffect(() => {
-  getProduct(slug).then(setProduct);
-}, [slug]);
-
 
 export default function Product() {
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {//Koristi useEffect da ponovo povuče
-  //  podatke svaki put kad se slug promeni.
-    fetch(`http://localhost:8000/products/${slug}`)
+  useEffect(() => {
+    let isMounted = true;
 
-      .then(res => res.json())
-      .then(data => setProduct(data));
+    setProduct(null);
+    setError(null);
+
+    getProduct(slug)
+      .then((data) => {
+        if (isMounted) setProduct(data);
+      })
+      .catch((err) => {
+        if (isMounted) setError(err.message || "Unable to load product.");
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [slug]);
 
+  if (error) return <p>We could not load this product right now.</p>;
   if (!product) return <p>Laddar...</p>;
 
   return (
